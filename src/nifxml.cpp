@@ -586,7 +586,7 @@ bool NifModel::loadXML()
 	QString result = NifModel::parseXmlDescription( fname );
 
 	if ( !result.isEmpty() ) {
-		Message::append( tr( "<b>Error loading XML</b><br/>You will need to reinstall the XML and restart the application." ), result, QMessageBox::Critical );
+		Message::append( tr( "<b>Error loading XML</b><br/>You will need to reinstall the XML and restart the application." ), result, Message::Icon::Critical );
 		return false;
 	}
 

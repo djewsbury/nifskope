@@ -2,7 +2,6 @@
 #define MESSAGE_H
 
 #include <QLoggingCategory>
-#include <QMessageBox>
 #include <QMetaType>
 #include <QString>
 
@@ -22,12 +21,20 @@ class Message : QObject
 	~Message();
 
 public:
-	static void message( QWidget *, const QString &, QMessageBox::Icon );
-	static void message( QWidget *, const QString &, const QString &, QMessageBox::Icon );
-	static void message( QWidget *, const QString &, const QMessageLogContext *, QMessageBox::Icon );
+    enum class Icon {
+        // keep this in sync with QMessageDialogOptions::Icon
+        NoIcon = 0,
+        Information = 1,
+        Warning = 2,
+        Critical = 3,
+        Question = 4
+    };
+	static void message( QWidget *, const QString &, Icon );
+	static void message( QWidget *, const QString &, const QString &, Icon );
+	static void message( QWidget *, const QString &, const QMessageLogContext *, Icon );
 
-	static void append( const QString &, const QString &, QMessageBox::Icon = QMessageBox::Warning );
-	static void append( QWidget *, const QString &, const QString &, QMessageBox::Icon = QMessageBox::Warning );
+	static void append( const QString &, const QString &, Icon = Icon::Warning );
+	static void append( QWidget *, const QString &, const QString &, Icon = Icon::Warning );
 
 	static void critical( QWidget *, const QString & );
 	static void critical( QWidget *, const QString &, const QString & );

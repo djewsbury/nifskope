@@ -39,12 +39,11 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QReadWriteLock>
 #include <QStack>
 #include <QStringList>
-#include <QUndoCommand>
-#include <QUndoStack>
 
 #include <memory>
 
 
+class QUndoStack;
 class SpellBook;
 
 using NifBlockPtr = std::shared_ptr<NifBlock>;
@@ -389,32 +388,6 @@ public:
 private:
 	const NifModel * model;
 	const NifItem * item;
-};
-
-
-class ChangeValueCommand : public QUndoCommand
-{
-public:
-	ChangeValueCommand( const QModelIndex & index, const QVariant & value, const QString & valueString, const QString & valueType, NifModel * model );
-	void redo() override;
-	void undo() override;
-private:
-	NifModel * nif;
-	QVariant newValue, oldValue;
-	QModelIndex idx;
-};
-
-
-class ToggleCheckBoxListCommand : public QUndoCommand
-{
-public:
-	ToggleCheckBoxListCommand( const QModelIndex & index, const QVariant & value, const QString & valueType, NifModel * model );
-	void redo() override;
-	void undo() override;
-private:
-	NifModel * nif;
-	QVariant newValue, oldValue;
-	QModelIndex idx;
 };
 
 

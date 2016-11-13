@@ -40,6 +40,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QFile>
 #include <QFileInfo>
 #include <QTime>
+#include <QWidget.h>
 
 
 //! @file basemodel.cpp Abstract base class for NIF data models

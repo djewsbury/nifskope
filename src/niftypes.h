@@ -33,8 +33,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef NIFTYPES_H
 #define NIFTYPES_H
 
-#include <QApplication>
-#include <QColor>
+#include <QCoreApplication>
+#include <QtGUI/QColor>
 #include <QDataStream>
 #include <QDebug>
 

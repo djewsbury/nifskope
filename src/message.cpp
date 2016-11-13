@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QAbstractButton>
 #include <QMap>
+#include "QMessagebox.h"
 
 
 Q_LOGGING_CATEGORY( ns, "nifskope" )
@@ -23,7 +24,7 @@ Message::~Message()
 }
 
 //! Static helper for message box without detail text
-void Message::message( QWidget * parent, const QString & str, QMessageBox::Icon icon )
+void Message::message( QWidget * parent, const QString & str, Icon icon )
 {
 	auto msgBox = new QMessageBox( parent );
 
@@ -32,7 +33,7 @@ void Message::message( QWidget * parent, const QString & str, QMessageBox::Icon 
 	msgBox->setWindowFlags( msgBox->windowFlags() | Qt::WindowStaysOnTopHint | Qt::Tool );
 
 	msgBox->setText( str );
-	msgBox->setIcon( icon );
+	msgBox->setIcon( (QMessageBox::Icon)icon );
 
 	msgBox->open();
 
@@ -41,7 +42,7 @@ void Message::message( QWidget * parent, const QString & str, QMessageBox::Icon 
 }
 
 //! Static helper for message box with detail text
-void Message::message( QWidget * parent, const QString & str, const QString & err, QMessageBox::Icon icon )
+void Message::message( QWidget * parent, const QString & str, const QString & err, Icon icon )
 {
 	if ( !parent )
 		parent = qApp->activeWindow();
@@ -53,7 +54,7 @@ void Message::message( QWidget * parent, const QString & str, const QString & er
 	msgBox->setWindowFlags( msgBox->windowFlags() | Qt::WindowStaysOnTopHint | Qt::Tool );
 
 	msgBox->setText( str );
-	msgBox->setIcon( icon );
+	msgBox->setIcon( (QMessageBox::Icon)icon );
 	msgBox->setDetailedText( err );
 
 	msgBox->open();
@@ -63,7 +64,7 @@ void Message::message( QWidget * parent, const QString & str, const QString & er
 }
 
 //! Static helper for installed message handler
-void Message::message( QWidget * parent, const QString & str, const QMessageLogContext * context, QMessageBox::Icon icon )
+void Message::message( QWidget * parent, const QString & str, const QMessageLogContext * context, Icon icon )
 {
 
 #ifdef QT_NO_DEBUG
@@ -92,12 +93,12 @@ void Message::message( QWidget * parent, const QString & str, const QMessageLogC
 
 void Message::critical( QWidget * parent, const QString & str )
 {
-	message( parent, str, QMessageBox::Critical );
+	message( parent, str, Icon::Critical );
 }
 
 void Message::critical( QWidget * parent, const QString & str, const QString & err )
 {
-	message( parent, str, err, QMessageBox::Critical );
+	message( parent, str, err, Icon::Critical );
 }
 
 /*
@@ -107,12 +108,12 @@ void Message::critical( QWidget * parent, const QString & str, const QString & e
 
 void Message::warning( QWidget * parent, const QString & str )
 {
-	message( parent, str, QMessageBox::Warning );
+	message( parent, str, Icon::Warning );
 }
 
 void Message::warning( QWidget * parent, const QString & str, const QString & err )
 {
-	message( parent, str, err, QMessageBox::Warning );
+	message( parent, str, err, Icon::Warning );
 }
 
 /*
@@ -122,12 +123,12 @@ void Message::warning( QWidget * parent, const QString & str, const QString & er
 
 void Message::info( QWidget * parent, const QString & str )
 {
-	message( parent, str, QMessageBox::Information );
+	message( parent, str, Icon::Information );
 }
 
 void Message::info( QWidget * parent, const QString & str, const QString & err )
 {
-	message( parent, str, err, QMessageBox::Information );
+	message( parent, str, err, Icon::Information );
 }
 
 /*
@@ -137,7 +138,7 @@ void Message::info( QWidget * parent, const QString & str, const QString & err )
 
 static QMap<QString, QMessageBox *> messageBoxes;
 
-void Message::append( QWidget * parent, const QString & str, const QString & err, QMessageBox::Icon icon )
+void Message::append( QWidget * parent, const QString & str, const QString & err, Icon icon )
 {
 	if ( !parent )
 		parent = qApp->activeWindow();
@@ -158,7 +159,7 @@ void Message::append( QWidget * parent, const QString & str, const QString & err
 		msgBox->setWindowFlags( msgBox->windowFlags() | Qt::WindowStaysOnTopHint | Qt::Tool );
 
 		msgBox->setText( str );
-		msgBox->setIcon( icon );
+		msgBox->setIcon( (QMessageBox::Icon)icon );
 		msgBox->setDetailedText( err + "\n" );
 		msgBox->open();
 
@@ -174,7 +175,7 @@ void Message::append( QWidget * parent, const QString & str, const QString & err
 		} );
 	}
 }
-void Message::append( const QString & str, const QString & err, QMessageBox::Icon icon )
+void Message::append( const QString & str, const QString & err, Icon icon )
 {
 	append( nullptr, str, err, icon );
 }

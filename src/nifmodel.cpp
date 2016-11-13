@@ -35,7 +35,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "settings.h"
 
 #include "niftypes.h"
-#include "spellbook.h"
 
 #include <QByteArray>
 #include <QColor>
@@ -44,6 +43,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QSettings>
 #include <QTime>
 #include <QtEndian>
+#include "QApplication.h"
 
 
 //! @file nifmodel.cpp The NIF data model.
@@ -500,7 +500,7 @@ bool NifModel::updateArrayItem( NifItem * array )
 	if ( rows > 1024 * 1024 * 8 ) {
 		auto m = tr( "array %1 much too large. %2 bytes requested" ).arg( array->name() ).arg( rows );
 		if ( msgMode == UserMessage ) {
-			Message::append( nullptr, tr( "Could not update array item." ), m, QMessageBox::Critical );
+			Message::append( nullptr, tr( "Could not update array item." ), m, Message::Icon::Critical );
 		} else {
 			testMsg( m );
 		}
@@ -509,7 +509,7 @@ bool NifModel::updateArrayItem( NifItem * array )
 	} else if ( rows < 0 ) {
 		auto m = tr( "array %1 invalid" ).arg( array->name() );
 		if ( msgMode == UserMessage ) {
-			Message::append( nullptr, tr( "Could not update array item." ), m, QMessageBox::Critical );
+			Message::append( nullptr, tr( "Could not update array item." ), m, Message::Icon::Critical );
 		} else {
 			testMsg( m );
 		}
@@ -1484,16 +1484,6 @@ QVariant NifModel::data( const QModelIndex & idx, int role ) const
 
 			if ( column == ValueCol && item->value().isColor() ) {
 				return item->value().toColor();
-			}
-		}
-		return QVariant();
-	case Qt::UserRole:
-		{
-			if ( column == ValueCol ) {
-				SpellPtr spell = SpellBook::instant( this, index );
-
-				if ( spell )
-					return spell->page() + "/" + spell->name();
 			}
 		}
 		return QVariant();
@@ -3038,74 +3028,4 @@ QVariant NifModelEval::operator()( const QVariant & v ) const
 	}
 
 	return v;
-}
-
-
-/*
- *  ChangeValueCommand
- */
-
-ChangeValueCommand::ChangeValueCommand( const QModelIndex & index,
-	const QVariant & value, const QString & valueString, const QString & valueType, NifModel * model )
-	: QUndoCommand(), nif( model ), idx( index )
-{
-	oldValue = index.data( Qt::EditRole );
-	newValue = value;
-
-	auto oldTxt = index.data( Qt::DisplayRole ).toString();
-	auto newTxt = valueString;
-
-	if ( !newTxt.isEmpty() )
-		setText( QApplication::translate( "ChangeValueCommand", "Set %1 to %2" ).arg( valueType ).arg( newTxt ) );
-	else
-		setText( QApplication::translate( "ChangeValueCommand", "Modify %1" ).arg( valueType ) );
-}
-
-void ChangeValueCommand::redo()
-{
-	//qDebug() << "Redoing";
-	nif->setData( idx, newValue, Qt::EditRole );
-
-	//qDebug() << nif->data( idx ).toString();
-}
-
-void ChangeValueCommand::undo()
-{
-	//qDebug() << "Undoing";
-	nif->setData( idx, oldValue, Qt::EditRole );
-
-	//qDebug() << nif->data( idx ).toString();
-}
-
-
-/*
- *  ToggleCheckBoxListCommand
- */
-
-ToggleCheckBoxListCommand::ToggleCheckBoxListCommand( const QModelIndex & index,
-	const QVariant & value, const QString & valueType, NifModel * model )
-	: QUndoCommand(), nif( model ), idx( index )
-{
-	oldValue = index.data( Qt::EditRole );
-	newValue = value;
-
-	auto oldTxt = index.data( Qt::DisplayRole ).toString();
-
-	setText( QApplication::translate( "ToggleCheckBoxListCommand", "Modify %1" ).arg( valueType ) );
-}
-
-void ToggleCheckBoxListCommand::redo()
-{
-	//qDebug() << "Redoing";
-	nif->setData( idx, newValue, Qt::EditRole );
-
-	//qDebug() << nif->data( idx ).toString();
-}
-
-void ToggleCheckBoxListCommand::undo()
-{
-	//qDebug() << "Undoing";
-	nif->setData( idx, oldValue, Qt::EditRole );
-
-	//qDebug() << nif->data( idx ).toString();
 }
