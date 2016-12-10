@@ -64,7 +64,7 @@ public:
 	NifModel( QObject * parent = 0 );
 
 	//! Find and parse the XML file
-	static bool loadXML();
+	static bool loadXML( QIODevice & file );
 
 	//! When creating NifModels from outside the main thread protect them with a QReadLocker
 	static QReadWriteLock XMLlock;
@@ -360,7 +360,7 @@ protected:
 	void updateModel( UpdateType value = utAll );
 
 	//! Parse the XML file using a NifXmlHandler
-	static QString parseXmlDescription( const QString & filename );
+	static QString parseXmlDescription( QIODevice & file );
 
 	// XML structures
 	static QList<quint32> supportedVersions;

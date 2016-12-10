@@ -567,23 +567,9 @@ public:
 };
 
 // documented in nifmodel.h
-bool NifModel::loadXML()
+bool NifModel::loadXML( QIODevice & file )
 {
-	QDir        dir( QApplication::applicationDirPath() );
-	QString     fname;
-	QStringList xmlList( QStringList()
-	                     << "nif.xml"
-#ifdef Q_OS_LINUX
-	                     << "/usr/share/nifskope/nif.xml"
-#endif
-	);
-	for ( const QString& str : xmlList ) {
-		if ( dir.exists( str ) ) {
-			fname = dir.filePath( str );
-			break;
-		}
-	}
-	QString result = NifModel::parseXmlDescription( fname );
+	QString result = NifModel::parseXmlDescription( file );
 
 	if ( !result.isEmpty() ) {
 		Message::append( tr( "<b>Error loading XML</b><br/>You will need to reinstall the XML and restart the application." ), result, Message::Icon::Critical );
@@ -594,7 +580,7 @@ bool NifModel::loadXML()
 }
 
 // documented in nifmodel.h
-QString NifModel::parseXmlDescription( const QString & filename )
+QString NifModel::parseXmlDescription( QIODevice & file )
 {
 	QWriteLocker lck( &XMLlock );
 
@@ -605,19 +591,11 @@ QString NifModel::parseXmlDescription( const QString & filename )
 
 	NifValue::initialize();
 
-	QFile f( filename );
-
-	if ( !f.exists() )
-		return tr( "nif.xml could not be found. Please install it and restart the application." );
-
-	if ( !f.open( QIODevice::ReadOnly | QIODevice::Text ) )
-		return tr( "Couldn't open NIF XML description file: %1" ).arg( filename );
-
 	NifXmlHandler handler;
 	QXmlSimpleReader reader;
 	reader.setContentHandler( &handler );
 	reader.setErrorHandler( &handler );
-	QXmlInputSource source( &f );
+	QXmlInputSource source( &file );
 	reader.parse( source );
 
 	if ( !handler.errorString().isEmpty() ) {

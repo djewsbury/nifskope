@@ -1028,6 +1028,7 @@ void NifModel::insertType( NifItem * parent, const NifData & data, int at )
 
 	if ( data.isArray() ) {
 		NifItem * item = insertBranch( parent, data, at );
+		(void)item;
 	} else if ( data.isCompound() ) {
 		NifBlockPtr compound = compounds.value( data.type() );
 		if ( !compound )
